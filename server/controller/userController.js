@@ -4,6 +4,11 @@ import { v2 } from 'cloudinary';
 import NewError from "../utils/NewError.js";
 import emailValidator from 'email-validator'
 
+const cookieOptions = {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+}
+
 export const signup = async (req, res, next) => {
     const { name, email, password } = req.body;
     const validEmail = emailValidator.validate(email);
@@ -56,6 +61,29 @@ export const signup = async (req, res, next) => {
     res.status(201).json({
         success: true,
         message: 'Account Created Successfully',
+        user
+    })
+}
+
+export const login = async (req, res, next) => {
+    const { email, password } = req.body
+    if (!email || !password) {
+        return next(new NewError('Email and Password are required', 400))
+    }
+
+    const user = await userModel.findOne({email}).select('+password')
+    console.log(user);
+    if (!(user && (await user.comparePassword(password)))) {
+        return next(new NewError('Email or password do not match or user does not exist', 400))
+    }
+
+    const token = await user.generateJWTToken()
+
+    user.password = undefined
+    res.cookie('token', token, cookieOptions)
+    res.status(200).json({
+        success: true,
+        message: 'User Logged in successfully',
         user
     })
 }
