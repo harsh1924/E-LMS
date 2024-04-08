@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiMenu } from 'react-icons/fi'
 import { AiFillCloseCircle } from 'react-icons/ai'
 import Footer from "../Pages/Footer";
+import { logout } from "../Redux/authSlice";
 
 const Layout = ({ children }) => {
     const dispatch = useDispatch();
@@ -29,7 +30,7 @@ const Layout = ({ children }) => {
 
     const handleLogout = async (event) => {
         event.preventDefault();
-        // const res = await dispatch(logout());
+        const res = await dispatch(logout());
         if (res?.payload?.success) navigate('/');
     };
 
