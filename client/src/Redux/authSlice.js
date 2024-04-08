@@ -8,6 +8,7 @@ const initialState = {
     role: localStorage.getItem('role') || ''
 };
 
+// SIGNUP FUNCTION
 export const createAccount = createAsyncThunk('auth/signup', async (data) => {
     try {
         let res = axiosInstance.post('user/signup', data);
@@ -22,10 +23,36 @@ export const createAccount = createAsyncThunk('auth/signup', async (data) => {
     }
 });
 
+// LOGIN FUNCTION
+export const login = createAsyncThunk('auth/login', async (data) => {
+    try {
+        let res = axiosInstance.post('/user/login', data);
+        await toast.promise(res, {
+            loading: 'Loading....',
+            success: 'User Has Been Logged In Successfully',
+            error: 'Failed to Login In',
+        });
+        return (await res).data;
+    } catch (error) {
+        toast.error(error.message)
+    }
+})
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(login.fulfilled, (state, action) => {
+                localStorage.setItem('data', JSON.stringify(action?.payload?.user));
+                localStorage.setItem('isLoggedIn', true);
+                localStorage.setItem('role', action?.payload?.role);
+                state.isLoggedIn = true;
+                state.data = action?.payload?.user;
+                state.role = action?.payload?.user?.role;
+            })
+    }
 });
 
 export default authSlice.reducer;
