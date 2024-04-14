@@ -9,6 +9,7 @@ const cookieOptions = {
     httpOnly: true,
 }
 
+// CREATE ACCOUNT
 export const signup = async (req, res, next) => {
     const { name, email, password } = req.body;
     const validEmail = emailValidator.validate(email);
@@ -48,8 +49,8 @@ export const signup = async (req, res, next) => {
                 crop: 'fill'
             });
             if (result) {
-                user.avatar.publicId = result.publicId;
-                user.avatar.secureURL = result.secureURL;
+                user.avatar.publicId = result.public_id;
+                user.avatar.secureURL = result.secure_url;
                 fs.rm(`uploads/${req.file.filename}`)
             }
         } catch (error) {
@@ -65,6 +66,7 @@ export const signup = async (req, res, next) => {
     })
 }
 
+// LOGIN
 export const login = async (req, res, next) => {
     const { email, password } = req.body
     if (!email || !password) {
@@ -88,7 +90,7 @@ export const login = async (req, res, next) => {
     })
 };
 
-
+// LOGOUT
 export const logout = async (req, res, next) => {
     res.cookie('token', null, {
         maxAge: 0,
@@ -99,3 +101,13 @@ export const logout = async (req, res, next) => {
         message: 'User Logged Out Successfully'
     })
 };
+
+// GEETING USER INFO
+export const getUserDetails = async(req, res, next) => {
+    const user = await userModel.findById(req.user.id);
+    res.status(200).json({
+        success: true,
+        message: 'User Details:',
+        user
+    })
+}

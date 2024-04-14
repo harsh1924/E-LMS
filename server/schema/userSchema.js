@@ -27,8 +27,12 @@ const userSchema = new Schema({
         status: String
     },
     avatar: {
-        publicId: String,
-        secureURL: String
+        publicId: {
+            type: String
+        },
+        secureURL: {
+            type: String
+        }
     },
     role: {
         type: String,
