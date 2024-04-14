@@ -77,12 +77,14 @@ export default function Login() {
                     </div>
                     <button className="w-full bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer" type="submit">Login</button>
                     <Link to={'/forgetpassword'}>
-                        <p className="link text-center text-accent cursor-pointer">Forget Password</p>
+                        <p className="link text-center text-accent cursor-pointer">Forget Password
+                        </p>
                     </Link>
                     <p className="text-center">
                         Dont have an account ? {" "}
-                        <Link to={'/signup'}>
-                            <p className="link text-accent cursor-pointer">Create Account</p>
+                        <Link to={'/signup'}
+                            className="link text-accent cursor-pointer">
+                                Create Account
                         </Link>
                     </p>
                 </form>
