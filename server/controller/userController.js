@@ -73,7 +73,7 @@ export const login = async (req, res, next) => {
         return next(new NewError('Email and Password are required', 400))
     }
 
-    const user = await userModel.findOne({email}).select('+password')
+    const user = await userModel.findOne({ email }).select('+password')
     console.log(user);
     if (!(user && (await user.comparePassword(password)))) {
         return next(new NewError('Email or password do not match or user does not exist', 400))
@@ -103,11 +103,79 @@ export const logout = async (req, res, next) => {
 };
 
 // GEETING USER INFO
-export const getUserDetails = async(req, res, next) => {
+export const getUserDetails = async (req, res, next) => {
     const user = await userModel.findById(req.user.id);
     res.status(200).json({
         success: true,
         message: 'User Details:',
         user
+    })
+}
+
+// UPDATE USER
+export const updateUser = async (req, res, next) => {
+    const { name } = req.body;
+    const { id } = req.params;
+    const user = await userModel.findById(id);
+
+    if (!user) {
+        return next(new NewError('Invalid User Account or User does not exist'), 400);
+    }
+
+    if (name) {
+        user.name = name;
+    }
+    if (req.file) {
+        await v2.uploader.destroy(user.avatar.publicId);
+
+        try {
+            const result = await v2.uploader.upload(req.file.path, {
+                folder: 'lms',
+                width: 250,
+                height: 250,
+                gravity: 'faces',
+                crop: 'fill'
+            });
+            if (result) {
+                user.avatar.publicId = result.public_id;
+                user.avatar.secureURL = result.secure_url;
+                fs.rm(`uploads/${req.file.filename}`);
+            }
+        } catch (error) {
+            return next(new NewError(error.message, 400));
+        }
+    }
+    await user.save();
+    res.status(200).json({
+        success: true,
+        message: 'User Details Updated Successfully'
+    })
+}
+
+// CHANGE PASSWORD
+export const changePassword = async (req, res, next) => {
+    const { oldPassword, newPassword } = req.body;
+    const { id } = req.user; // bcoz of isLoggedIn we will get the user id
+    
+    if (!oldPassword || !newPassword) {
+        return next(new NewError('Old and New Password are required', 400));
+    }
+
+    const user = await userModel.findById(id).select('+password');
+    if (!user) {
+        return next(new NewError('Invalid user id or user does not exist', 400));
+    }
+
+    const isPasswordValid = await user.comparePassword(oldPassword);
+    if (!isPasswordValid) {
+        return next(new NewError('Invalid Old Password', 400));
+    }
+
+    user.password = newPassword;
+    await user.save();
+    user.password = undefined;
+    res.status(200).json({
+        success: true,
+        message: 'Password Changed Successfully'
     })
 }
