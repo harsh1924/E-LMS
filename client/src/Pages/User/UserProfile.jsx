@@ -41,7 +41,7 @@ export default function UserProfile() {
 
 {/* BUTTON TO CHANGE THE PASSWORD */}
 <div className="flex items-center justify-between gap-2">
-<Link to={userData?.email === 'test@gmail.com' ? '/denied' : '/changepassword'} className="w-1/2 bg-yellow-600 hover:bg-yellow-700 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center" >
+<Link to={userData?.email === 'test@gmail.com' ? '/denied' : '/user/changepassword'} className="w-1/2 bg-yellow-600 hover:bg-yellow-700 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center" >
 <button>Change Password</button>
 </Link>    
 

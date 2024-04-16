@@ -6,6 +6,8 @@ import RequireAuth from "./Components/RequireAuth";
 import UserProfile from "./Pages/User/UserProfile";
 import NotFound from "./Pages/NotFound";
 import Contact from "./Pages/Contact";
+import EditProfile from "./Pages/User/EditProfile";
+import ChangePassword from "./Pages/User/ChangePassword";
 
 const App = () => {
   return (
@@ -18,6 +20,8 @@ const App = () => {
 
         <Route element={<RequireAuth allowedRoles={['USER', 'ADMIN']} />} >
           <Route path="/user/profile" element={<UserProfile />} />
+          <Route path="/user/editprofile" element={<EditProfile />} />
+          <Route path="/user/changepassword" element={<ChangePassword />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

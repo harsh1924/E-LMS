@@ -63,6 +63,37 @@ export const getUserData = createAsyncThunk('user/details', async () => {
     }
 })
 
+// UPDATE USER PROFILE FUNCTION
+export const updateProfile = createAsyncThunk('/user/update/profile', async (data) => {
+    try {
+        let res = axiosInstance.put(`/user/update/${data[0]}`, data[1]);
+        toast.promise(res, {
+            loading: 'Updating...',
+            success: 'User Details Updated Successfully',
+            error: 'Failed to update user profile'
+        });
+        return (await res).data;
+    } catch (error) {
+        toast.error(error?.response?.data?.message)
+    }
+});
+
+// CHANGE PASSWORD FUNCTION
+export const changePassword = createAsyncThunk('/auth/changePassword',
+    async (userPassword) => {
+        try {
+            let res = axiosInstance.post('/user/change-password', userPassword);
+            await toast.promise(res, {
+                loading: 'Loading....',
+                success: 'Password Changed Successfully',
+                error: 'Failed to change password'
+            });
+            return (await res).data;
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        }
+    })
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
